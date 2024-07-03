@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API testing</title>
+</head>
+<body>
+    <p>It's working</p>
+
+
+
+    <script>
+        async function Home() {
+
+            // Value is inside the try block
+            let theRealData
+
+            let theProductObject = {}
+
+            let UniqueProductsId = []
+
+            let productCategories = []
+
+            let productColors = []
+
+            let productReviews = []
+
+            // Doing another method
+            try{
+                let someApiData = await fetch('http://127.0.0.1:8000/api/products');
+
+                if(!someApiData.ok){
+                throw new Error('something went wrong regarding the network request.');
+                }
+
+                let someJsonData = await someApiData.json();
+
+                theRealData = someJsonData[0].name;
+
+                someJsonData.forEach(element => {
+                    UniqueProductsId.push(element.product_id);
+                });
+
+                UniqueProductsId = new Set(UniqueProductsId);
+
+                console.log(UniqueProductsId);
+
+            } catch(e){
+            console.error('Catch Error :' , e);
+            }
+
+        }
+
+        Home();
+
+    </script>
+</body>
+</html>
