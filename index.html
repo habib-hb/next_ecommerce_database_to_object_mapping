@@ -13,10 +13,7 @@
     <script>
         async function Home() {
 
-            // Value is inside the try block
-            let theRealData
-
-            let theProductObject = {}
+            let theEntireAllProductArray = []
 
             let UniqueProductsId = []
 
@@ -36,8 +33,6 @@
 
                 let someJsonData = await someApiData.json();
 
-                theRealData = someJsonData[0].name;
-
                 someJsonData.forEach(element => {
                     UniqueProductsId.push(element.product_id);
                 });
@@ -45,6 +40,68 @@
                 UniqueProductsId = new Set(UniqueProductsId);
 
                 console.log(UniqueProductsId);
+
+                UniqueProductsId.forEach(unique_product_id => {
+                    // The Single Product Object Initialization
+                    let theSingleProductObject = {};
+
+                    let loopedProductCategory = [];
+
+                    let theImagesArrayOfObjects = [];
+
+                    let theReviewsArrayOfObjects = [];
+
+                    let theSingleProductSpecificObjects =someJsonData.filter(item => item.product_id == unique_product_id);
+
+                    theSingleProductSpecificObjects.forEach(single_object => {
+                        // Product Category Mapping
+                        loopedProductCategory.push(single_object.category);
+
+                        // Product color and Image Mapping
+                        theImagesArrayOfObjects.push({
+                            'image' : single_object.image,
+                            'color' : single_object.color_name,
+                            'colorCode' : single_object.color_code
+                        })
+
+                        // Product review Mapping
+                        single_object.reviewer_name && theReviewsArrayOfObjects.push({
+                            'reviewerName' : single_object.reviewer_name,
+                            'review' : single_object.review
+                        });
+                    });
+
+
+
+                    // Setting Values to the Single Product Object
+                    theSingleProductObject['product_id'] = unique_product_id;
+
+                    theSingleProductObject['category'] = loopedProductCategory[0]; // Later You can customize this
+
+                    theSingleProductObject['images'] = new Set(theImagesArrayOfObjects);
+
+                    theSingleProductObject['review'] = theReviewsArrayOfObjects ? new Set(theReviewsArrayOfObjects) : [];
+
+                    theSingleProductObject['name'] = theSingleProductSpecificObjects[0].name; 
+
+                    theSingleProductObject['description'] = theSingleProductSpecificObjects[0].description;
+
+                    theSingleProductObject['price'] = theSingleProductSpecificObjects[0].price;
+
+                    theSingleProductObject['brand'] = theSingleProductSpecificObjects[0].brand;
+
+                    theSingleProductObject['inStock'] = theSingleProductSpecificObjects[0].stock_amount > 0 ? true : false;
+
+
+
+                    // Pushing the Single Product Object to the Array
+                    theEntireAllProductArray.push(theSingleProductObject);
+
+                });
+
+
+
+                console.log(theEntireAllProductArray);
 
             } catch(e){
             console.error('Catch Error :' , e);
